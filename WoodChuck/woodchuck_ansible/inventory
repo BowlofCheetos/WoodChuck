@@ -1,0 +1,7 @@
+[all:vars]
+ansible_network_os=ios
+ansible_user=
+ansible_ssh_pass=
+
+[devices]
+J-BR99-RTR ansible_host=

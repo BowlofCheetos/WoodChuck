@@ -1,0 +1,26 @@
+---
+- name: DEPLOY CONFIG 
+  hosts: all
+  connection: network_cli
+  gather_facts: false
+
+  tasks:
+    - name: Load configuration groups from YAML file
+      include_vars:
+        file: commands.yml
+
+    - name: Apply contextual configuration commands
+      ios_config:
+        lines: "{{ item[1:] }}"
+        parents: "{{ item[0] }}"
+      loop: "{{ config_groups }}"
+      ignore_errors: yes
+      when: item[0].startswith('interface ') or item[0].startswith('router ')
+
+    - name: Apply global configuration commands
+      ios_config:
+        lines: "{{ item }}"
+      loop: "{{ config_groups }}"
+      ignore_errors: yes
+      when: not (item[0].startswith('interface ') or item[0].startswith('router '))
+
